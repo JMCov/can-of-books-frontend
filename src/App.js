@@ -10,7 +10,34 @@ import {
 } from "react-router-dom";
 import About from './About.js'
 
+
 class App extends React.Component {
+  
+  constructor(props) {
+    super(props);
+    this.state = {
+      showModal: false,
+      
+    }
+  }
+
+  handleOpenModal = () => {
+    this.setState({
+      showModal: true,
+      // title: title,
+      // description: description,
+      // status: status
+    });
+    // console.log(this.state.description)
+  }
+  handleCloseModal = () => {
+    this.setState({
+      showModal: false
+    });
+  }
+
+
+
   render() {
     return (
       <>
@@ -19,7 +46,10 @@ class App extends React.Component {
           <Routes>
             <Route 
               exact path="/"
-              element={<BestBooks />}
+              element={<BestBooks 
+                      handleOpenModal={this.handleOpenModal}
+                      showModal={this.state.showModal}
+                      handleCloseModal={this.handleCloseModal}/>}
             >
             </Route>
             <Route 
@@ -29,6 +59,7 @@ class App extends React.Component {
             </Route>
             
           </Routes>
+
           <Footer />
         </Router>
       </>
