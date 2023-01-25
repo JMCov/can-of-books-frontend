@@ -1,4 +1,20 @@
-/* .carousel-item {
-  width: 500px;
-  height:500px;
+.active.carousel-item {
+  position: relative;
+}
+.carousel-item { 
+  justify-content: center;
+  /* position: absolute; */
+ } 
+.carousel img {
+  margin: auto;
+  height: 10%;
+  width: 10%
+}
+a.carousel-control-prev{
+  position: relative;
+}
+/* button.btn.btn-primary {
+  align-items: center;
+  position: absolute;
+
 } */

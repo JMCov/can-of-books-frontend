@@ -2,6 +2,8 @@ import React from 'react';
 import axios from 'axios';
 import Carousel from 'react-bootstrap/Carousel'
 import './BestBooks.css'
+import { Button } from 'react-bootstrap';
+import BookFormModal from './BookFormModal';
 
 
 class BestBooks extends React.Component {
@@ -30,10 +32,39 @@ class BestBooks extends React.Component {
     }
   }
 
+  deleteBooks = async (singleBook) => {
+    try {
+      // TODO: use axios to send the ID to the server on the path param
+      let url = `${process.env.REACT_APP_SERVER}/books/${singleBook._id}`
+
+      await axios.delete(url);
+
+      // TODO: update state to remove the deleted book
+      let updatedBooks = this.state.books.filter(book => book._id !== singleBook._id);
+
+      this.setState({
+        books: updatedBooks
+      });
+
+    } catch (error) {
+      console.log(error.message)
+    }
+  }
+
+  handleSyncBooks = (sync) => {
+    this.setState({
+      books: sync
+    })
+  }
+
   // REACT LIFECYCLE METHOD 
 
   componentDidMount() {
     this.getBooks();
+  }
+
+  handleBook = () => {
+    this.props.handleOpenModal();
   }
 
 
@@ -47,26 +78,37 @@ class BestBooks extends React.Component {
         <h2>My Essential Lifelong Learning &amp; Formation Shelf</h2>
 
         {this.state.books.length ? (
-          // <p>Book Carousel coming soon</p>
+
           <Carousel>
             {this.state.books.map((book, idx) => {
-            return (
-            <Carousel.Item key={idx}>
-              <img
-                className="d-block w-100"
-                src="https://media.wiley.com/product_data/coverImage300/27/07645011/0764501127.jpg"
-                alt={book.title}
-              />
-              <Carousel.Caption>
-                <h3>{book.title}</h3>
-                <p>{book.description}</p>
-              </Carousel.Caption>
-            </Carousel.Item>
-            )})}
+              return (
+
+                <Carousel.Item key={idx}>
+                  <Button onClick={() => { this.deleteBooks(book) }}>Delete</Button>
+                  <img
+                    className="d-block w-50"
+                    src="https://media.wiley.com/product_data/coverImage300/27/07645011/0764501127.jpg"
+                    alt={book.title}
+                  />
+                  <Carousel.Caption>
+                    <h3>{book.title}</h3>
+                    <p>{book.description}</p>
+                  </Carousel.Caption>
+                </Carousel.Item>
+
+              )
+            })}
           </Carousel>
         ) : (
           <h3>No Books Found :(</h3>
         )}
+        <Button onClick={this.handleBook}>Add a Book</Button>
+        <BookFormModal
+          handleCloseModal={this.props.handleCloseModal}
+          showModal={this.props.showModal}
+          books={this.state.books}
+          handleSyncBooks={this.handleSyncBooks} 
+         />
       </>
     )
   }
