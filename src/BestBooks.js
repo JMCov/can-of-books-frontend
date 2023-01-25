@@ -4,13 +4,16 @@ import Carousel from 'react-bootstrap/Carousel'
 import './BestBooks.css'
 import { Button } from 'react-bootstrap';
 import BookFormModal from './BookFormModal';
+import BookUpdateModal from './BookUpdateModal';
 
 
 class BestBooks extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      books: []
+      books: [],
+      showUpdateModal: false
+
     }
   }
 
@@ -51,6 +54,31 @@ class BestBooks extends React.Component {
     }
   }
 
+  handleUpdateBooks = async (bookUpdate) => {
+    try {
+      // this.props.handleOpenModal();
+      let url = `${process.env.REACT_APP_SERVER}/books/${bookUpdate._id}`
+      console.log('book update >>>>', bookUpdate)
+      console.log('URL >>>', url)
+      let updatedBook = await axios.put(url, bookUpdate);
+      console.log('updatedBook.data >>>>>', updatedBook.data)
+      let updatedArr = this.state.books.map(existingBook => {
+        return existingBook._id === bookUpdate._id
+          ? updatedBook.data
+          : existingBook
+      });
+
+      this.setState({
+        books: updatedArr
+      })
+
+
+    } catch (error) {
+      console.log(error.message)
+    }
+
+  }
+
   handleSyncBooks = (sync) => {
     this.setState({
       books: sync
@@ -67,7 +95,17 @@ class BestBooks extends React.Component {
     this.props.handleOpenModal();
   }
 
+  handleUpdateModal = () => {
+    this.setState({
+      showUpdateModal: true
+    })
+  }
 
+  closeUpdateModal = () => {
+    this.setState({
+      showUpdateModal: false
+    })
+  }
 
   render() {
 
@@ -81,21 +119,29 @@ class BestBooks extends React.Component {
 
           <Carousel>
             {this.state.books.map((book, idx) => {
+              
               return (
-
+              
                 <Carousel.Item key={idx}>
-                  <Button onClick={() => { this.deleteBooks(book) }}>Delete</Button>
                   <img
                     className="d-block w-50"
                     src="https://media.wiley.com/product_data/coverImage300/27/07645011/0764501127.jpg"
                     alt={book.title}
                   />
                   <Carousel.Caption>
+                    <Button onClick={() => { this.deleteBooks(book) }}>Delete</Button>
+                    <Button onClick={() => { this.handleUpdateModal() }}>Update</Button>
+
                     <h3>{book.title}</h3>
                     <p>{book.description}</p>
                   </Carousel.Caption>
+                  <BookUpdateModal
+                    handleCloseModal={this.closeUpdateModal}
+                    showModal={this.state.showUpdateModal}
+                    book={book}
+                    handleUpdateBooks={this.handleUpdateBooks}
+                  />
                 </Carousel.Item>
-
               )
             })}
           </Carousel>
@@ -107,8 +153,8 @@ class BestBooks extends React.Component {
           handleCloseModal={this.props.handleCloseModal}
           showModal={this.props.showModal}
           books={this.state.books}
-          handleSyncBooks={this.handleSyncBooks} 
-         />
+          handleSyncBooks={this.handleSyncBooks}
+        />
       </>
     )
   }

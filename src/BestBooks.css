@@ -3,6 +3,7 @@
 }
 .carousel-item { 
   justify-content: center;
+
   /* position: absolute; */
  } 
 .carousel img {
@@ -18,3 +19,12 @@ a.carousel-control-prev{
   position: absolute;
 
 } */
+h3{
+  color: purple;
+}
+p {
+  color: purple;
+}
+nav {
+  color: white;
+}
