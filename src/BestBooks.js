@@ -12,7 +12,8 @@ class BestBooks extends React.Component {
     super(props);
     this.state = {
       books: [],
-      showUpdateModal: false
+      showUpdateModal: false,
+      selectedBook: {}
 
     }
   }
@@ -67,7 +68,7 @@ class BestBooks extends React.Component {
           ? updatedBook.data
           : existingBook
       });
-
+     console.log('Updated Arrays>>>', updatedArr)
       this.setState({
         books: updatedArr
       })
@@ -95,9 +96,11 @@ class BestBooks extends React.Component {
     this.props.handleOpenModal();
   }
 
-  handleUpdateModal = () => {
+  handleUpdateModal = (book) => {
     this.setState({
-      showUpdateModal: true
+      showUpdateModal: true,
+      selectedBook: book
+
     })
   }
 
@@ -116,8 +119,8 @@ class BestBooks extends React.Component {
         <h2>My Essential Lifelong Learning &amp; Formation Shelf</h2>
 
         {this.state.books.length ? (
-
-          <Carousel>
+          <>
+          <Carousel slide={false}>
             {this.state.books.map((book, idx) => {
               
               return (
@@ -130,21 +133,23 @@ class BestBooks extends React.Component {
                   />
                   <Carousel.Caption>
                     <Button onClick={() => { this.deleteBooks(book) }}>Delete</Button>
-                    <Button onClick={() => { this.handleUpdateModal() }}>Update</Button>
+                    <Button onClick={() => { this.handleUpdateModal(book) }}>Update</Button>
 
                     <h3>{book.title}</h3>
                     <p>{book.description}</p>
+                    <p>{book._id}</p>
                   </Carousel.Caption>
-                  <BookUpdateModal
-                    handleCloseModal={this.closeUpdateModal}
-                    showModal={this.state.showUpdateModal}
-                    book={book}
-                    handleUpdateBooks={this.handleUpdateBooks}
-                  />
                 </Carousel.Item>
               )
             })}
           </Carousel>
+            <BookUpdateModal
+              handleCloseModal={this.closeUpdateModal}
+              showModal={this.state.showUpdateModal}
+              book={this.state.selectedBook}
+              handleUpdateBooks={this.handleUpdateBooks}
+            />
+            </>
         ) : (
           <h3>No Books Found :(</h3>
         )}
