@@ -28,3 +28,8 @@ p {
 nav {
   color: white;
 }
+
+.carousel-caption {
+position: static;
+background-color: white;
+}
